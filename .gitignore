@@ -1,0 +1,40 @@
+# Terraform working directories and state
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+
+# Terraform plans and crash logs
+*.tfplan
+crash.log
+crash.*.log
+
+# Local Terraform values and backend configuration
+*.tfvars
+*.tfvars.json
+*.tfbackend
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local credentials
+.azure/
+*.pem
+*.key
+*.pfx
+
+# Application dependencies and generated output
+node_modules/
+dist/
+.venv/
+__pycache__/
+
+# Unreviewed local output
+.local/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
