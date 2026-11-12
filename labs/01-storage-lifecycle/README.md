@@ -1,16 +1,21 @@
-# LAB_ID — LAB_TITLE
+# 01 — Storage and lifecycle
 
 ## Status
 
-Planned
+In progress
 
 ## Learning objectives
 
 By the end of this lab, I can:
 
-- ...
-- ...
-- ...
+- Explain storage accounts, containers, and blobs.
+- Upload and retrieve a sample blob.
+- Distinguish management-plane access from data-plane access.
+- Explain the access tiers used in the exercise.
+- Configure a lifecycle policy.
+- Verify the policy configuration.
+- Explain why asynchronous lifecycle processing should not be treated as an immediate test.
+- Remove the lab resources.
 
 ## Scenario
 
