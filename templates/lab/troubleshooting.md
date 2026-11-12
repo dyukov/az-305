@@ -1,25 +1,43 @@
-## Blob upload failed despite resource-management access
+# Troubleshooting
+
+## ISSUE_TITLE
 
 ### Symptom
 
-The storage account was visible, but uploading a blob was denied.
+What failed?
+
+Include the relevant error message, with sensitive values removed.
+
+### Context
+
+What operation was I attempting?
+Which identity and resource were involved?
+
+### Hypotheses
+
+- Possible cause:
+- Possible cause:
 
 ### Investigation
 
-Checked which identity performed the request and which roles applied.
+1. Check performed:
+   Result:
 
-### Cause
+2. Check performed:
+   Result:
 
-The identity lacked the required blob data-plane permission.
+### Confirmed cause
+
+What evidence supports this conclusion?
 
 ### Fix
 
-Assigned an appropriate data role at the intended scope.
+What changed?
 
 ### Verification
 
-Repeated the operation after the assignment became effective.
+How did I prove the fix worked?
 
 ### Lesson
 
-Managing a resource and accessing its data are different permissions.
+What should I remember next time?
