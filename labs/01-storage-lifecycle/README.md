@@ -33,13 +33,13 @@ By the end, I can:
 
 ## Resources and costs
 
-| Resource | Purpose | Cost consideration |
-| --- | --- | --- |
-| Resource group | One isolated cleanup boundary | No direct RG charge |
-| Standard GPv2 Storage account (StorageV2, Standard_LRS) | Host Blob service | Capacity, transactions, data transfer and tier-dependent charges; LRS is a deliberate low-cost lab choice, not production guidance |
-| Private blob container | Hold sample blobs | Included in blob storage usage |
-| Tiny test blobs | Verify upload, download, tier and data access | Minimal capacity and operation charges |
-| Lifecycle management policy | Transition eligible block blobs from Hot to Cool | Rule itself is not a per-hour resource; transitions and subsequent operations can incur charges |
+| Resource                                                | Purpose                                          | Cost consideration                                                                                                                 |
+| ------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Resource group                                          | One isolated cleanup boundary                    | No direct RG charge                                                                                                                |
+| Standard GPv2 Storage account (StorageV2, Standard_LRS) | Host Blob service                                | Capacity, transactions, data transfer and tier-dependent charges; LRS is a deliberate low-cost lab choice, not production guidance |
+| Private blob container                                  | Hold sample blobs                                | Included in blob storage usage                                                                                                     |
+| Tiny test blobs                                         | Verify upload, download, tier and data access    | Minimal capacity and operation charges                                                                                             |
+| Lifecycle management policy                             | Transition eligible block blobs from Hot to Cool | Rule itself is not a per-hour resource; transitions and subsequent operations can incur charges                                    |
 
 **Cost controls:** use tiny files, keep the lab short, do not enable Archive in this lab, avoid production or shared resources, and run Terraform destroy at the end. Cool/Cold/Archive tiers can impose minimum storage duration or early-deletion charges; using a policy does not eliminate charges. Prices depend on Azure region and account configuration. Verify with [Azure Blob Storage pricing](https://azure.microsoft.com/pricing/details/storage/blobs/).
 
@@ -133,16 +133,16 @@ terraform version
 
 ## Results
 
-| Check | Expected result | Actual result |
-| --- | --- | --- |
-| Subscription + tools | Intended subscription; working CLI/Terraform | Not tested |
-| Terraform plan | Only designated RG/account/container | Not tested |
-| Resource deployment | RG, private container and GPv2 account exist | Not tested |
-| Blob round-trip | Content matches | Not tested |
-| Management/data access | Permissions distinguished by operation | Not tested |
-| Lifecycle rule | Prefix and age rule visible | Not tested |
-| Troubleshooting | Evidence-based diagnosis recorded | Not tested |
-| Cleanup | Lab RG absent | Not tested |
+| Check                  | Expected result                              | Actual result |
+| ---------------------- | -------------------------------------------- | ------------- |
+| Subscription + tools   | Intended subscription; working CLI/Terraform | Not tested    |
+| Terraform plan         | Only designated RG/account/container         | Not tested    |
+| Resource deployment    | RG, private container and GPv2 account exist | Not tested    |
+| Blob round-trip        | Content matches                              | Not tested    |
+| Management/data access | Permissions distinguished by operation       | Not tested    |
+| Lifecycle rule         | Prefix and age rule visible                  | Not tested    |
+| Troubleshooting        | Evidence-based diagnosis recorded            | Not tested    |
+| Cleanup                | Lab RG absent                                | Not tested    |
 
 ## Cleanup
 
