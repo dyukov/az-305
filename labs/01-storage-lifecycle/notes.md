@@ -2,28 +2,164 @@
 
 ## Concepts
 
-### CONCEPT_NAME
+### Subscription ID from active Azure CLI session
 
 My explanation:
+Azure CLI provides a way to get active Subscription ID in plain text
+It is assigned to environment variable `ARM_SUBSCRIPTION_ID`
 
 Example:
+
+```bash
+export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+
+terraform init
+terraform validate
+```
 
 ## Observations
 
 - What I did:
-- What happened:
+  Fetched Subscription ID from Azure CLI session.
+  Assigned it to known environment variable.
+  Terraform picked it up from env var.
+  PROFIT
+- What happened: Terraform has been successfully initialized!
 - Why I think it happened:
+
+```bash
+  export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+  #  │          │                │       │         │         │
+  #  │          │                │       │         │         └─ output format
+  #  │          │                │       │         └─ JMESPath query
+  #  │          │                │       └─ show current account info
+  #  │          │                └─ Azure CLI command
+  #  │          └─ env var that Terraform azurerm provider reads
+  #  └─ make it available to child processes
+```
+
+Step by step
+
+1. `az account show` — returns your current Azure CLI context as JSON:
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "name": "Prod-EU",
+  "state": "Enabled",
+  "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+  "user": {
+    "name": "anna@contoso.com",
+    "type": "user"
+  }
+}
+```
+
+2. `--query id` — JMESPath filter, extracts just the `id` field:
+
+"a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+3. `-o tsv` — output as tab-separated values (strips the quotes):
+
+a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+4. `$(...)` — command substitution, captures the output as a string.
+
+5. `export ARM_SUBSCRIPTION_ID="..."`— sets the env var so Terraform can read it.
+
+End result
+
+# What actually gets set:
+
+```bash
+export ARM_SUBSCRIPTION_ID="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
+
+Why `-o tsv` matters
+
+| Flag              | Output         | Problem                          |
+| ----------------- | -------------- | -------------------------------- |
+| -o json (default) | "a1b2c3d4-..." | Includes quotes — breaks env var |
+| -o tsv            | a1b2c3d4-...   | Clean value — works correctly    |
+
+You could:
+`export ARM_SUBSCRIPTION_ID="a1b2c3d4-e5f6-7890-abcd-ef1234567890"`
+
+But the dynamic approach is preferred because:
+
+- It reads from your current `az` session — whatever you selected with `az account set`
+- Scripts stay portable across environments (dev, prod) without editing
+- No secrets/IDs committed to version control
 
 ## AWS comparisons
 
 - Azure concept:
+  Using Subscription
+
+  ```bash
+  export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+  ```
+
 - Closest AWS concept:
-- Important differences:
+  Using Account
+
+  ```bash
+  export AWS_PROFILE="prod"
+  ```
+
+What happens:
+`AWS_PROFILE` tells the AWS CLI (and SDKs, Terraform, etc.) which set of credentials to use from your local config files.
+
+The config files
+
+```s
+  ~/.aws/credentials                    ~/.aws/config
+  ┌─────────────────────────────┐      ┌──────────────────────────────────┐
+  │ [default]                   │      │ [default]                        │
+  │ aws_access_key_id = AKIA... │      │ region = eu-north-1              │
+  │ aws_secret_access_key = ... │      │                                  │
+  │                             │      │ [profile prod]                   │
+  │ [prod]                      │      │ region = eu-west-1               │
+  │ aws_access_key_id = AKIA... │      │                                  │
+  │ aws_secret_access_key = ... │      │ [profile dev]                    │
+  │                             │      │ region = eu-north-1              │
+  │ [dev]                       │      │                                  │
+  │ aws_access_key_id = AKIA... │      │                                  │
+  │ aws_secret_access_key = ... │      │                                  │
+  └─────────────────────────────┘      └──────────────────────────────────┘
+```
 
 ## Open questions
 
-- ...
+- Other usages for bash `export` command?
+
+### [Environment Variables in bash](https://askubuntu.com/questions/205688/whats-the-difference-between-set-export-and-env-and-when-should-i-use-each)
+
+```bash
+    key=value # You want to use this form when you are setting a variable only for the shell to use
+    env key=value # You use this form to temporarily change the environment of this particular instance of the program launched.
+    export key=value # This is the most common way of setting variables for use of subsequently started processes in a shell
+```
+
+- Why commit `.terraform.lock.hcl`?
+  It locks the exact provider versions and their checksums, ensuring everyone on the team (and CI/CD) uses identical provider binaries.
+
+  What it locks
+
+  # .terraform.lock.hcl (auto-generated by terraform init)
+
+```tf
+  provider "registry.terraform.io/hashicorp/azurerm" {
+  version = "3.85.0"
+  constraints = "~> 3.85"
+  hashes = [
+    "h1:abc123...", ← integrity checksums
+    "zh:def456...",
+    ]
+  }
+```
 
 ## Takeaways
 
-- ...
+- Funny way to safely fetch ID's from Azure CLI
+- Easier then `.tfvars`
